@@ -155,6 +155,10 @@ struct delegpt_addr {
 	uint8_t dnsseclame;
 	/** the TLS authentication name, (if not NULL) to use. */
 	char* tls_auth_name;
+	/** the hostname of addr, may be same as tls_auth_name. */
+	uint8_t* hostname;
+	/** the length of hostname */
+	size_t hostnamelen;
 };
 
 /**
@@ -264,11 +268,14 @@ int delegpt_add_rrset(struct delegpt* dp, struct regional* regional,
  * @param bogus: if address is bogus.
  * @param lame: if address is lame.
  * @param tls_auth_name: TLS authentication name (or NULL).
+ * @param hostname: hostname of addr. (or NULL)
+ * @param hostnamelen: length of hostname.
  * @return false on error.
  */
 int delegpt_add_addr(struct delegpt* dp, struct regional* regional, 
 	struct sockaddr_storage* addr, socklen_t addrlen,
-	uint8_t bogus, uint8_t lame, char* tls_auth_name);
+	uint8_t bogus, uint8_t lame, char* tls_auth_name,
+	uint8_t* hostname, size_t hostnamelen);
 
 /** 
  * Find NS record in name list of delegation point.
@@ -400,10 +407,13 @@ int delegpt_add_ns_mlc(struct delegpt* dp, uint8_t* name, uint8_t lame);
  * @param bogus: if address is bogus.
  * @param lame: if address is lame.
  * @param tls_auth_name: TLS authentication name (or NULL).
+ * @param hostname: hostname of addr. (or NULL)
+ * @param hostnamelen: length of hostname
  * @return false on error.
  */
 int delegpt_add_addr_mlc(struct delegpt* dp, struct sockaddr_storage* addr,
-	socklen_t addrlen, uint8_t bogus, uint8_t lame, char* tls_auth_name);
+	socklen_t addrlen, uint8_t bogus, uint8_t lame, char* tls_auth_name,
+	uint8_t* hostname, size_t hostnamelen);
 
 /**
  * Add target address to the delegation point.

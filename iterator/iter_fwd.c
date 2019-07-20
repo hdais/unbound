@@ -245,7 +245,7 @@ read_fwds_addr(struct config_stub* s, struct delegpt* dp)
 				"ssl library, ignored name for %s", p->str);
 #endif
 		if(!delegpt_add_addr_mlc(dp, &addr, addrlen, 0, 0,
-			tls_auth_name)) {
+			tls_auth_name, NULL, 0)) { /* no hostname option for forwarder */
 			log_err("out of memory");
 			return 0;
 		}

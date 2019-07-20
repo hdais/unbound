@@ -1994,7 +1994,7 @@ parse_delegpt(RES* ssl, char* args, uint8_t* nm, int allow_names)
 #endif
 			/* add address */
 			if(!delegpt_add_addr_mlc(dp, &addr, addrlen, 0, 0,
-				auth_name)) {
+				auth_name, NULL, 0)) { /* no hostname for stub/fwd */
 				(void)ssl_printf(ssl, "error out of memory\n");
 				delegpt_free_mlc(dp);
 				return NULL;

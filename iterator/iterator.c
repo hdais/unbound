@@ -1892,7 +1892,7 @@ processLastResort(struct module_qstate* qstate, struct iter_qstate* iq,
 			for(a = p->target_list; a; a=a->next_target) {
 				(void)delegpt_add_addr(iq->dp, qstate->region,
 					&a->addr, a->addrlen, a->bogus,
-					a->lame, a->tls_auth_name);
+					a->lame, a->tls_auth_name, a->hostname, a->hostnamelen);
 			}
 		}
 		iq->dp->has_parent_side_NS = 1;
@@ -2509,6 +2509,26 @@ processQueryTargets(struct module_qstate* qstate, struct iter_qstate* iq,
 		verbose(VERB_ALGO, "dnssec status: %s%s",
 			iq->dnssec_expected?"expected": "not expected",
 			iq->dnssec_lame_query?" but lame_query anyway": "");
+	}
+
+	/* EDNS0 query target zone */
+	edns_opt_list_remove(&qstate->edns_opts_back_out, 65230);
+	if(iq->dp->name) {
+		edns_opt_list_append(&qstate->edns_opts_back_out, 65230,
+				iq->dp->namelen, iq->dp->name, qstate->region);
+		if(verbosity >= VERB_QUERY)
+			log_name_addr(VERB_QUERY, "EDNS0 target zone:",
+				iq->dp->name, &target->addr, target->addrlen);
+	}
+	/* EDNS0 query target hostname */
+	edns_opt_list_remove(&qstate->edns_opts_back_out, 65231);
+	if(target->hostname) {
+		edns_opt_list_append(&qstate->edns_opts_back_out, 65231,
+			target->hostnamelen, target->hostname, qstate->region);
+		if(verbosity >= VERB_QUERY)
+			log_name_addr(VERB_QUERY, "EDNS0 target hostname:",
+				target->hostname, &target->addr, target->addrlen);
+
 	}
 	fptr_ok(fptr_whitelist_modenv_send_query(qstate->env->send_query));
 	outq = (*qstate->env->send_query)(&iq->qinfo_out,

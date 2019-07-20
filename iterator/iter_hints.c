@@ -258,7 +258,7 @@ read_stubs_addr(struct config_stub* s, struct delegpt* dp)
 				"ssl library, ignored name for %s", p->str);
 #endif
 		if(!delegpt_add_addr_mlc(dp, &addr, addrlen, 0, 0,
-			auth_name, NULL, 0)) { /* no hostname for stubs, currently */
+			auth_name, NULL, 0)) {
 			log_err("out of memory");
 			return 0;
 		}
